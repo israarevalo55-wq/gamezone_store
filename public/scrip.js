@@ -340,13 +340,11 @@ function abrirModal(juego) {
 
     // Mostrar modal
     modal.classList.remove("hidden");
-    document.body.style.overflow = "hidden"; // Prevenir scroll
 }
 
 // Cerrar modal
 function cerrarModal() {
     modal.classList.add("hidden");
-    document.body.style.overflow = "auto"; // Restaurar scroll
 }
 
 // Event listeners del modal
