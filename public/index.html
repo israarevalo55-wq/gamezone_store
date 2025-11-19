@@ -85,18 +85,35 @@
       class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     </div>
 
-    <!-- Botones de paginación -->
-    <div class="flex justify-center gap-4 mt-8">
+    <!-- Botones de paginación y carga -->
+    <div class="flex flex-col items-center gap-6 mt-8">
+      <!-- Indicador de página -->
+      <div class="text-center">
+        <p class="text-slate-600 text-sm font-medium">
+          Página <span id="pagina-actual" class="font-bold text-slate-900">1</span>
+        </p>
+      </div>
+
+      <!-- Botones de navegación de páginas -->
+      <div class="flex justify-center gap-4">
+        <button 
+          id="anterior-btn" 
+          class="px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled>
+          ← Anterior
+        </button>
+        <button 
+          id="siguiente-btn" 
+          class="px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-semibold">
+          Siguiente →
+        </button>
+      </div>
+
+      <!-- Botón de cargar más dinámicamente -->
       <button 
-        id="anterior-btn" 
-        class="px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-        disabled>
-        Anterior
-      </button>
-      <button 
-        id="siguiente-btn" 
-        class="px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-semibold">
-        Siguiente
+        id="cargar-mas-btn" 
+        class="px-8 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-sm w-full sm:w-auto">
+        ⬇️ Cargar más juegos
       </button>
     </div>
   </section>
@@ -111,52 +128,65 @@
   aria-modal="true"
   aria-labelledby="modal-titulo">
   
-  <div class="bg-white rounded-xl shadow-2xl w-80 max-h-96 overflow-y-auto overflow-hidden">
+  <div class="bg-white rounded-xl shadow-2xl w-96 max-h-[90vh] overflow-y-auto">
     
-    <!-- Encabezado del modal -->
+    <!-- Encabezado del modal con imagen -->
     <div class="relative">
       <img 
         id="modal-imagen" 
         src="" 
         alt="Juego" 
-        class="w-full h-24 object-cover">
+        class="w-full h-40 object-cover">
       
       <!-- Botón cerrar -->
       <button 
         id="cerrar-modal"
-        class="absolute top-2 right-2 bg-white rounded-full p-1 hover:bg-slate-100 transition shadow-md"
+        class="absolute top-3 right-3 bg-white rounded-full p-2 hover:bg-slate-100 transition shadow-lg"
         aria-label="Cerrar modal">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
         </svg>
       </button>
     </div>
 
     <!-- Contenido del modal -->
-    <div class="p-3 flex flex-col gap-2">
-      <h2 id="modal-titulo" class="text-base font-bold text-slate-900 line-clamp-2"></h2>
+    <div class="p-6 flex flex-col gap-4">
+      <!-- Título -->
+      <h2 id="modal-titulo" class="text-xl font-bold text-slate-900"></h2>
 
-      <div class="flex flex-col gap-1 text-xs border-t pt-2">
-        <div>
-          <span class="text-slate-500 uppercase tracking-wide text-xs">Precio normal</span>
-          <p id="modal-precio-normal" class="font-semibold text-slate-900 text-xs mt-0.5"></p>
+      <!-- Sección de precios destacada -->
+      <div class="bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg p-5 border-2 border-slate-200">
+        
+        <!-- Precio Normal -->
+        <div class="mb-4 pb-4 border-b border-slate-300">
+          <span class="text-xs uppercase tracking-widest text-slate-600 font-semibold">Precio Normal</span>
+          <p id="modal-precio-normal" class="text-2xl font-bold text-slate-900 line-through mt-1"></p>
         </div>
 
-        <div>
-          <span class="text-slate-500 text-xs uppercase tracking-wide">Precio en oferta</span>
-          <p id="modal-precio-oferta" class="font-bold text-green-600 text-xs mt-0.5"></p>
+        <!-- Precio en Oferta (destacado) -->
+        <div class="mb-4 pb-4 border-b border-slate-300">
+          <span class="text-xs uppercase tracking-widest text-green-600 font-semibold">💰 Precio en Oferta</span>
+          <p id="modal-precio-oferta" class="text-3xl font-bold text-green-600 mt-1"></p>
         </div>
 
+        <!-- Descuento/Ahorro -->
         <div>
-          <span class="text-slate-500 text-xs uppercase tracking-wide">Ahorro</span>
-          <p id="modal-ahorro" class="font-bold text-red-500 text-xs mt-0.5"></p>
+          <span class="text-xs uppercase tracking-widest text-red-600 font-semibold">🏷️ Descuento</span>
+          <p id="modal-ahorro" class="text-2xl font-bold text-red-600 mt-1"></p>
         </div>
+
       </div>
 
+      <!-- Botón Comprar -->
       <button 
-        class="w-full bg-slate-900 text-white py-1.5 rounded-lg hover:bg-slate-800 transition font-semibold text-xs mt-1">
-        Comprar
+        class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg hover:from-green-700 hover:to-green-800 transition font-bold text-base shadow-lg">
+        🛒 Ir a Comprar
       </button>
+
+      <!-- Información adicional -->
+      <div class="text-xs text-slate-500 text-center pt-3 border-t">
+        Haz clic en "Ir a Comprar" para acceder a la tienda y completar tu compra
+      </div>
     </div>
   </div>
 </div>

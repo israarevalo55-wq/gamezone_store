@@ -5,6 +5,8 @@ const selectOrdenar = document.querySelector("#ordenarPor");
 const filtrarTienda = document.querySelector("#filtrar-tienda");
 const siguienteBtn = document.querySelector("#siguiente-btn");
 const anteriorBtn = document.querySelector("#anterior-btn");
+const cargarMasBtn = document.querySelector("#cargar-mas-btn");
+const paginaActualSpan = document.querySelector("#pagina-actual");
 
 // Elementos de búsqueda
 const buscarInput = document.querySelector("#buscar-input");
@@ -22,6 +24,7 @@ const modalAhorro = document.querySelector("#modal-ahorro");
 // Variable para almacenar todos los juegos cargados
 let videojuegosCargados = [];
 let paginaActual = 0;
+let todosCargados = []; // Acumular todos los juegos cargados dinámicamente
 
 // Datos locales por si falla la API
 const videojuegosLocales = [
@@ -53,10 +56,14 @@ function ocultarSpinner() {
     spinner.classList.add("hidden");
 }
 
-// Renderizar tarjetas
+// Renderizar tarjetas (reemplaza el grid)
 function renderizarVideojuegos(lista) {
     grid.innerHTML = "";
+    agregarVideojuegosAlGrid(lista);
+}
 
+// Agregar tarjetas al grid sin limpiar (para carga dinámica)
+function agregarVideojuegosAlGrid(lista) {
     lista.forEach(juego => {
         const titulo = juego.title || juego.external || "Juego sin título";
         const imagen = juego.thumb || juego.thumb_url || juego.image || "";
@@ -94,6 +101,8 @@ function renderizarVideojuegos(lista) {
     });
 }
 
+// Agregar cambios al siguiente
+
 // Cargar desde API
 async function cargarVideojuegosInicial() {
     try {
@@ -105,16 +114,58 @@ async function cargarVideojuegosInicial() {
 
         window._juegosCache = datos;
         videojuegosCargados = datos;
+        todosCargados = datos; // Iniciar con los primeros datos
 
         ocultarSpinner();
         renderizarVideojuegos(datos);
         actualizarBotonesPaginacion();
+        actualizarIndicadorPagina();
 
     } catch (error) {
         console.error("Error al cargar los videojuegos:", error);
         ocultarSpinner();
         videojuegosCargados = videojuegosLocales;
         renderizarVideojuegos(videojuegosLocales);
+    }
+}
+
+// Cargar más juegos dinámicamente (sin reemplazar los anteriores)
+async function cargarMasVideojuegos() {
+    try {
+        mostrarSpinner();
+        
+        paginaActual++; // Incrementar página
+        const url = `https://www.cheapshark.com/api/1.0/deals?storeID=1&pageSize=30&page=${paginaActual}`;
+        const resp = await fetch(url);
+        const datos = await resp.json();
+
+        if (datos.length === 0) {
+            console.log("No hay más juegos disponibles");
+            paginaActual--; // Revertir increment
+            alert("No hay más juegos disponibles");
+            ocultarSpinner();
+            return;
+        }
+
+        // Agregar nuevos juegos a la lista acumulada
+        videojuegosCargados = datos;
+        todosCargados = [...todosCargados, ...datos];
+
+        // Agregar las nuevas tarjetas al grid sin limpiar
+        agregarVideojuegosAlGrid(datos);
+        
+        ocultarSpinner();
+        actualizarIndicadorPagina();
+        
+        // Scroll suave hacia los nuevos juegos
+        setTimeout(() => {
+            grid.lastElementChild?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 100);
+
+    } catch (error) {
+        console.error("Error al cargar más videojuegos:", error);
+        paginaActual--; // Revertir increment si hay error
+        ocultarSpinner();
     }
 }
 
@@ -324,6 +375,11 @@ function actualizarBotonesPaginacion() {
     anteriorBtn.disabled = paginaActual === 0;
 }
 
+// Actualizar indicador de página actual
+function actualizarIndicadorPagina() {
+    paginaActualSpan.textContent = paginaActual + 1;
+}
+
 // Ir a siguiente página
 async function irSiguiente() {
     paginaActual++;
@@ -349,5 +405,6 @@ async function irAnterior() {
 // Event listeners de paginación
 siguienteBtn.addEventListener("click", irSiguiente);
 anteriorBtn.addEventListener("click", irAnterior);
+cargarMasBtn.addEventListener("click", cargarMasVideojuegos);
 
 cargarVideojuegosInicial();
