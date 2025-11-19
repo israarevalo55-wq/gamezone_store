@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GameZone Store</title>
+
+<!-- Tailwind generado -->
+<link href="./output.css" rel="stylesheet" />
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+<header class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+  <div>
+    <h1 class="text-2xl font-bold tracking-tight">GameZone Store</h1>
+    <p class="text-sm text-slate-200">Catálogo de videojuegos</p>
+  </div>
+  <span class="text-xs text-slate-300">v1.0 · demo educativa</span>
+</header>
+
+<main class="p-6 max-w-6xl mx-auto">
+
+  <!-- BARRA DE BÚSQUEDA -->
+  <section class="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div class="flex items-center gap-2 w-full md:max-w-md">
+      <input
+        id="buscar-input"
+        type="text"
+        placeholder="Buscar videojuego..."
+        class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+      />
+      <button id="buscar-btn" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800">
+        Buscar
+      </button>
+    </div>
+
+    <div class="flex gap-2 flex-wrap">
+      <select
+        id="filtrar-tienda"
+        class="rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-400"
+      >
+        <option value="">Todas las tiendas</option>
+        <option value="1">Steam</option>
+        <option value="3">Humble Bundle</option>
+        <option value="7">Epic Games Store</option>
+        <option value="2">GamersGate</option>
+        <option value="4">GOG</option>
+        <option value="5">Ubisoft Store</option>
+        <option value="6">Windows Store</option>
+        <option value="8">Green Man Gaming</option>
+        <option value="9">Reddit</option>
+        <option value="10">Newegg</option>
+        <option value="11">Fanatical</option>
+        <option value="12">DLGamer</option>
+        <option value="13">Voidu</option>
+        <option value="14">Disney Connect</option>
+      </select>
+
+      <select
+        id="ordenarPor"
+        class="rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-400"
+      >
+        <option value="">Ordenar por</option>
+        <option value="descuento-desc">Descuento (Mayor a Menor)</option>
+        <option value="descuento-asc">Descuento (Menor a Mayor)</option>
+        <option value="precio-desc">Precio (Mayor a Menor)</option>
+        <option value="precio-asc">Precio (Menor a Mayor)</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- GRID -->
+  <section>
+    <h2 class="text-lg font-semibold mb-4 text-slate-800">Videojuegos destacados</h2>
+
+    <!-- Spinner de carga -->
+    <div id="spinner" class="hidden flex justify-center items-center gap-3 mb-8 py-6">
+      <div class="animate-spin h-8 w-8 border-4 border-slate-300 border-t-slate-900 rounded-full"></div>
+      <span class="text-slate-600 font-medium">Cargando videojuegos...</span>
+    </div>
+
+    <div 
+      id="grid-videojuegos"
+      class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    </div>
+
+    <!-- Botones de paginación -->
+    <div class="flex justify-center gap-4 mt-8">
+      <button 
+        id="anterior-btn" 
+        class="px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled>
+        Anterior
+      </button>
+      <button 
+        id="siguiente-btn" 
+        class="px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-semibold">
+        Siguiente
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<!-- MODAL DETALLE DE JUEGO -->
+<div 
+  id="modal-juego" 
+  class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modal-titulo">
+  
+  <div class="bg-white rounded-xl shadow-2xl w-80 max-h-96 overflow-y-auto overflow-hidden">
+    
+    <!-- Encabezado del modal -->
+    <div class="relative">
+      <img 
+        id="modal-imagen" 
+        src="" 
+        alt="Juego" 
+        class="w-full h-24 object-cover">
+      
+      <!-- Botón cerrar -->
+      <button 
+        id="cerrar-modal"
+        class="absolute top-2 right-2 bg-white rounded-full p-1 hover:bg-slate-100 transition shadow-md"
+        aria-label="Cerrar modal">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Contenido del modal -->
+    <div class="p-3 flex flex-col gap-2">
+      <h2 id="modal-titulo" class="text-base font-bold text-slate-900 line-clamp-2"></h2>
+
+      <div class="flex flex-col gap-1 text-xs border-t pt-2">
+        <div>
+          <span class="text-slate-500 uppercase tracking-wide text-xs">Precio normal</span>
+          <p id="modal-precio-normal" class="font-semibold text-slate-900 text-xs mt-0.5"></p>
+        </div>
+
+        <div>
+          <span class="text-slate-500 text-xs uppercase tracking-wide">Precio en oferta</span>
+          <p id="modal-precio-oferta" class="font-bold text-green-600 text-xs mt-0.5"></p>
+        </div>
+
+        <div>
+          <span class="text-slate-500 text-xs uppercase tracking-wide">Ahorro</span>
+          <p id="modal-ahorro" class="font-bold text-red-500 text-xs mt-0.5"></p>
+        </div>
+      </div>
+
+      <button 
+        class="w-full bg-slate-900 text-white py-1.5 rounded-lg hover:bg-slate-800 transition font-semibold text-xs mt-1">
+        Comprar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Script correcto -->
+<script src="./scrip.js"></script>
+
+</body>
+</html>
